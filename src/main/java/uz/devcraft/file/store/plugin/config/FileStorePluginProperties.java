@@ -9,4 +9,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "file-store-plugin")
 public class FileStorePluginProperties {
 
+    private String store;
+
 }

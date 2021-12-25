@@ -1,40 +1,47 @@
 package uz.devcraft.file.store.plugin.service.impl;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.stereotype.Service;
-//import org.springframework.web.client.RestTemplate;
-//import org.springframework.beans.factory.annotation.Qualifier;
-import uz.devcraft.file.store.plugin.config.FileStorePluginProperties;
-import uz.devcraft.file.store.plugin.service.FileStorePluginService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.core.io.Resource;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+import uz.devcraft.file.store.plugin.service.FileStorePluginService;
+
+import java.nio.file.Path;
+import java.util.stream.Stream;
 
 import static uz.devcraft.file.store.plugin.service.FileStorePluginService.NAME;
 
+@RequiredArgsConstructor
 @Slf4j
 @Service(NAME)
-@ConditionalOnProperty(
-        prefix = "file-store-plugin",
-        name = "simulate",
-        havingValue = "false"
-)
 public class FileStorePluginServiceImpl implements FileStorePluginService {
 
-    private final FileStorePluginProperties fileStorePluginProperties;
-//    private final RestTemplate fileStorePluginRestTemplate;
+    private final BaseFileStorePluginService baseService;
 
-    @Autowired
-    public FileStorePluginServiceImpl(FileStorePluginProperties fileStorePluginProperties/*, @Qualifier("fileStorePluginRestTemplate") RestTemplate fileStorePluginRestTemplate*/) {
-        this.fileStorePluginProperties = fileStorePluginProperties;
-//        this.fileStorePluginRestTemplate = fileStorePluginRestTemplate;
+    @Override
+    public String save(MultipartFile file) {
+        return baseService.save(file);
     }
 
-//    @Override
-//    public String send(String request) {
-//        log.debug("Request : {}, name : {}", request, fileStorePluginProperties.getName());
-//        return "Response for : " + request;
-//    }
+    @Override
+    public Resource load(String filename) {
+        return baseService.load(filename);
+    }
 
+    @Override
+    public Stream<Path> loadAll() {
+        return baseService.loadAll();
+    }
+
+    @Override
+    public void delete(String filename) {
+        baseService.delete(filename);
+    }
+
+    @Override
+    public void deleteAll() {
+        baseService.deleteAll();
+    }
 }

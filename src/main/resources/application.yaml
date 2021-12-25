@@ -1,3 +1,2 @@
 file-store-plugin:
-#  name: file-store-plugin-sample
-  simulate: true
+  store: /home/kuchkaroff/uploads/
