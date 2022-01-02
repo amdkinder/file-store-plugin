@@ -1,6 +1,9 @@
 package uz.devcraft.file.store.plugin.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.rendering.ImageType;
+import org.apache.pdfbox.rendering.PDFRenderer;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
@@ -9,6 +12,9 @@ import org.springframework.web.multipart.MultipartFile;
 import uz.devcraft.file.store.plugin.config.FileStorePluginProperties;
 
 import javax.annotation.PostConstruct;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
@@ -19,10 +25,12 @@ import java.util.stream.Stream;
 
 @Slf4j
 @Service
-
 public class BaseFileStorePluginService {
 
     private final Path root;
+    private static final String PNG_FORMAT = "png";
+    private static final String DOT = ".";
+    private static final String DEFAULT_PNG = "default.png";
 
     public BaseFileStorePluginService(FileStorePluginProperties storePluginProperties) {
         root = Paths.get(storePluginProperties.getStore());
@@ -125,5 +133,24 @@ public class BaseFileStorePluginService {
             default:
                 return ".txt";
         }
+    }
+
+    public String generateImageFromPdf(String filename) {
+        var path = root.resolve(filename);
+        String imageUri = DEFAULT_PNG;
+        try {
+            PDDocument document = PDDocument.load(path.toFile());
+            PDFRenderer pdfRenderer = new PDFRenderer(document);
+            if (document.getNumberOfPages() > 0) {
+                BufferedImage image = pdfRenderer.renderImageWithDPI(0, 100, ImageType.RGB);
+                imageUri = UUID.randomUUID() + DOT + PNG_FORMAT;
+                File outPutFile = new File(root.resolve(imageUri).toUri());
+                ImageIO.write(image, PNG_FORMAT, outPutFile);
+                document.close();
+            }
+        } catch (Exception e) {
+            log.warn("Can not load pdf");
+        }
+        return imageUri;
     }
 }

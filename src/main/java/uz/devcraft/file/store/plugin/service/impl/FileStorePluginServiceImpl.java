@@ -44,4 +44,9 @@ public class FileStorePluginServiceImpl implements FileStorePluginService {
     public void deleteAll() {
         baseService.deleteAll();
     }
+
+    @Override
+    public String generateImageFromPdf(String filename) {
+        return baseService.generateImageFromPdf(filename);
+    }
 }

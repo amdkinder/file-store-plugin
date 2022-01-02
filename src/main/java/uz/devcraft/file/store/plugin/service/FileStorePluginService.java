@@ -20,5 +20,7 @@ public interface FileStorePluginService {
 
     void deleteAll();
 
+    String generateImageFromPdf(String filename);
+
 
 }
