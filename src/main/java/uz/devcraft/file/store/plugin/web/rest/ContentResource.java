@@ -30,7 +30,7 @@ public class ContentResource {
         var headers = new HttpHeaders();
         var path = Paths.get(resource.getURI());
         headers.add(HttpHeaders.CONTENT_TYPE, Files.probeContentType(path));
-        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=$filename");
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=" + filename);
         return ResponseEntity.ok()
             .headers(headers)
             .contentLength(resource.contentLength())
